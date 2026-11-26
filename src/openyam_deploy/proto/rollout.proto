@@ -1,0 +1,89 @@
+// Remote RolloutSession contract (see src/omniact/rollout/session.py in OmniAct).
+//
+// Embodiment-generic: the server (omniact-molmospaces) runs a sim + FK and serves closed-loop episodes; the
+// client (omniact) drives the loop and runs the policy locally. The wire types are deliberately
+// schema-free tensor-maps, so the contract never mentions the policy or its observation keys -- the
+// server owns which keys it fills (views, proprio, node_geometry, node_proprio, node_pose, edges,
+// axis_mask, joint_type, ...) and the client reads what it needs.
+syntax = "proto3";
+
+package rollout;
+
+service Rollout {
+  rpc Open  (OpenRequest)  returns (Session);      // build a session from a sent replay bundle
+  rpc Reset (ResetRequest) returns (Observation);  // begin an episode -> initial observation
+  rpc Step  (StepRequest)  returns (StepResult);   // apply an action, advance one tick
+  rpc Close (CloseRequest) returns (Empty);
+}
+
+// A dense tensor as raw little-endian bytes + dtype + shape. dtype is a numpy/torch name
+// ("float32", "uint8", "int64", "bool").
+message Tensor {
+  repeated int64 shape = 1;
+  string dtype = 2;
+  bytes data = 3;
+}
+
+// A scalar in the info dict (per-episode metrics: success, reward, episode_idx, ...).
+message Value {
+  oneof v {
+    bool b = 1;
+    double f = 2;
+    int64 i = 3;
+    string s = 4;
+  }
+}
+
+message OpenRequest {
+  // The whole replay bundle, relative path -> file content (meta.json, states.npz, dr_deltas.npz,
+  // cameras.json, dr_texture_paths.json, embodiment/*, and asset_blacklist.txt if present). Sent as bytes
+  // so the server needs no shared filesystem and no path to locate -- only its MLSPACES asset corpus
+  // (+ blacklist) to resolve scene assets and any embodiment ${ROOT} refs. The client sources the bundle
+  // from anywhere (local dir or gs://).
+  map<string, bytes> bundle = 1;
+  map<string, string> options = 2;     // seed, cameras, continue_on_ik_failure (server-defined); NOT a path
+}
+message Session {
+  string session_id = 1;
+  int32 n_episodes = 2;
+}
+
+message ResetRequest {
+  string session_id = 1;
+  int32 episode_idx = 2;
+}
+message StepRequest {
+  string session_id = 1;
+  // The policy's two heads, ALL FOUR fields REQUIRED. What runs is what the masks command: the `action` entries
+  // under `action_mask` as relative-to-absolute joint targets; the `node_action_pose` TCP row under
+  // `node_action_pose_mask` through IK on the server for the arm; everything else held. A head you do not
+  // command is zeros with an all-False mask. An `action_mask` covering arm joints beside the pose makes it
+  // hybrid (it steers the IK's posture). The TCP setup: node_action_pose_mask on the TCP row + action_mask on
+  // the gripper driver dims. Masks that command nothing -> INVALID_ARGUMENT. IK thrashing / infeasibility ends
+  // the episode (info ik_outcome) only when Open's continue_on_ik_failure is 0 (default 1: keep running).
+  // Same names and shapes as the wods fields.
+  Tensor action = 2;             // per-node RELATIVE joint action (N,); zeros where action_mask is False
+  Tensor node_action_pose = 3;   // per-node ABSOLUTE pose (N, 3, 4) SE(3) [R | t]: house-world <- WODS-style
+                                 // TCP axes (x right, y up, z forward into the fingertips; det -1 like c2w).
+                                 // The server reads the TCP row (joint type 3); the other rows are unused.
+  Tensor action_mask = 4;        // (N,) bool: the `action` entries that are commands
+  Tensor node_action_pose_mask = 5;  // (N,) bool: the `node_action_pose` rows that are commands (only the TCP
+                                 // row may be True)
+}
+message StepResult {
+  Observation obs = 1;
+  bool done = 2;
+  map<string, Value> info = 3;
+}
+message CloseRequest {
+  string session_id = 1;
+}
+message Empty {}
+
+// Generic observation: named tensors + static node labels + the language prompt.
+message Observation {
+  map<string, Tensor> tensors = 1;
+  repeated string node_names = 2;
+  string prompt = 3;
+  repeated string camera_names = 4;  // the V-axis order of views / node_geometry / node_pose
+}

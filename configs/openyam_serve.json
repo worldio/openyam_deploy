@@ -1,0 +1,65 @@
+{
+  "port": 50051,
+  "tick_s": 0.066,
+  "task_horizon": 500,
+  "idle_timeout_s": 600,
+  "log_dir": "out/serve",
+  "reset_gripper_m": 0.0,
+  "gravity": {"mass_kg": 0.69, "com_back_m": 0.1, "kp": [100, 100, 100, 100, 100, 100]},
+  "arms": {
+    "left": {
+      "start_pose_deg": [0.23, 68.65, 102.06, -73.32, 0.1, 0.16],
+      "start_turns": [],
+      "gravity": {"link": "follower_l_link_6"},
+      "node_graph": {
+        "axis_length": 0.07,
+        "nodes": [
+          {"name": "link1", "joint": "follower_l_joint1"},
+          {"name": "link2", "joint": "follower_l_joint2"},
+          {"name": "link3", "joint": "follower_l_joint3"},
+          {"name": "link4", "joint": "follower_l_joint4"},
+          {"name": "link5", "joint": "follower_l_joint5"},
+          {"name": "link6", "joint": "follower_l_joint6"},
+          {"name": "gripper/tip_left", "joint": "follower_l_finger_joint2", "proprio_center": 0.023475,
+           "centre_offset": [-0.0547, 0.0234, 0.0187]},
+          {"name": "gripper/tip_right", "joint": "follower_l_finger_joint1", "proprio_center": 0.023475,
+           "centre_offset": [0.0547, -0.0234, 0.0187]},
+          {"name": "gripper/tcp_frame", "body": "follower_l_hand_tcp", "tcp": true, "site_position": [0, 0, 0.0391],
+           "site_rotation": [[-1, 0, 0], [0, 1, 0], [0, 0, -1]]},
+          {"name": "terminal_left", "body": "follower_l_left_finger", "point": [-0.0076, 0, 0.1005]},
+          {"name": "terminal_right", "body": "follower_l_right_finger", "point": [0.0075, 0, 0.1005]}
+        ],
+        "edges": [["link1", "link2"], ["link2", "link3"], ["link3", "link4"], ["link4", "link5"], ["link5", "link6"],
+                  ["link6", "gripper/tip_left"], ["link6", "gripper/tip_right"], ["link6", "gripper/tcp_frame"],
+                  ["gripper/tip_left", "terminal_left"], ["gripper/tip_right", "terminal_right"]]
+      }
+    },
+    "right": {
+      "start_pose_deg": [0.23, 68.65, 102.06, -73.32, 0.1, 0.16],
+      "start_turns": [],
+      "gravity": {"link": "follower_r_link_6"},
+      "node_graph": {
+        "axis_length": 0.07,
+        "nodes": [
+          {"name": "link1", "joint": "follower_r_joint1"},
+          {"name": "link2", "joint": "follower_r_joint2"},
+          {"name": "link3", "joint": "follower_r_joint3"},
+          {"name": "link4", "joint": "follower_r_joint4"},
+          {"name": "link5", "joint": "follower_r_joint5"},
+          {"name": "link6", "joint": "follower_r_joint6"},
+          {"name": "gripper/tip_left", "joint": "follower_r_finger_joint2", "proprio_center": 0.023475,
+           "centre_offset": [-0.0547, 0.0234, 0.0187]},
+          {"name": "gripper/tip_right", "joint": "follower_r_finger_joint1", "proprio_center": 0.023475,
+           "centre_offset": [0.0547, -0.0234, 0.0187]},
+          {"name": "gripper/tcp_frame", "body": "follower_r_hand_tcp", "tcp": true, "site_position": [0, 0, 0.0391],
+           "site_rotation": [[-1, 0, 0], [0, 1, 0], [0, 0, -1]]},
+          {"name": "terminal_left", "body": "follower_r_left_finger", "point": [-0.0076, 0, 0.1005]},
+          {"name": "terminal_right", "body": "follower_r_right_finger", "point": [0.0075, 0, 0.1005]}
+        ],
+        "edges": [["link1", "link2"], ["link2", "link3"], ["link3", "link4"], ["link4", "link5"], ["link5", "link6"],
+                  ["link6", "gripper/tip_left"], ["link6", "gripper/tip_right"], ["link6", "gripper/tcp_frame"],
+                  ["gripper/tip_left", "terminal_left"], ["gripper/tip_right", "terminal_right"]]
+      }
+    }
+  }
+}

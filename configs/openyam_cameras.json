@@ -1,0 +1,87 @@
+{
+  "joint_state_topic": "/joint_states",
+  "robot_description_topic": "/robot_description",
+  "motion": {
+    "owner_service": "/controls_owner_manager/switch_owner",
+    "owner_requester": "diagnostics"
+  },
+  "arms": {
+    "left": {
+      "reference_body": "follower_l_base_link",
+      "ee_body": "follower_l_hand_tcp",
+      "motion": {
+        "command_topic": "/follower_l_forward_position_controller/commands",
+        "command_joints": ["follower_l_joint1", "follower_l_joint2", "follower_l_joint3",
+                           "follower_l_joint4", "follower_l_joint5", "follower_l_joint6", "follower_l_finger_joint1"]
+      },
+      "cameras": {
+        "waist": {"parent_body": "follower_l_base_link",
+                  "view": {"size": [256, 256],
+                           "K": [[189.767804, 0.0, 127.5], [0.0, 189.767804, 127.5], [0.0, 0.0, 1.0]],
+                           "R": [[0.976567189, 0.10472479, -0.188013944], [-0.120112423, 0.990118458, -0.0723771], [0.1785764, 0.093263912, 0.979495948]]}},
+        "side": {"parent_body": "follower_l_base_link"},
+        "wrist_l": {"parent_body": "follower_l_link_6"}
+      }
+    },
+    "right": {
+      "reference_body": "follower_r_base_link",
+      "ee_body": "follower_r_hand_tcp",
+      "motion": {
+        "command_topic": "/follower_r_forward_position_controller/commands",
+        "command_joints": ["follower_r_joint1", "follower_r_joint2", "follower_r_joint3",
+                           "follower_r_joint4", "follower_r_joint5", "follower_r_joint6", "follower_r_finger_joint1"]
+      },
+      "cameras": {
+        "waist": {"parent_body": "follower_r_base_link",
+                  "view": {"size": [256, 256],
+                           "K": [[189.767804, 0.0, 127.5], [0.0, 189.767804, 127.5], [0.0, 0.0, 1.0]],
+                           "R": [[0.748607013, -0.2990749, 0.591727762], [0.415764224, 0.906957263, -0.067591659], [-0.516456823, 0.296618824, 0.803299211]]}},
+        "side": {"parent_body": "follower_r_base_link"},
+        "wrist_r": {"parent_body": "follower_r_link_6"}
+      }
+    }
+  },
+  "cameras": {
+    "waist": {
+      "topic": "/cam_waist/image_raw/compressed",
+      "mount": "gripper",
+      "board": {"dict": "DICT_5X5_1000", "squares_x": 5, "squares_y": 4, "square_len_mm": 20, "marker_ratio": 0.75},
+      "raw": {"lens": "fisheye", "size": [1920, 1080],
+              "K": [[612.085468, 0.0, 936.191803], [0.0, 619.553266, 544.481226], [0.0, 0.0, 1.0]],
+              "D": [-0.073439097, 0.020927665, -0.008762031, 0.001079916]}
+    },
+    "side": {
+      "topic": "/cam_side/image_raw/compressed",
+      "mount": "gripper",
+      "board": {"dict": "DICT_5X5_1000", "squares_x": 5, "squares_y": 4, "square_len_mm": 20, "marker_ratio": 0.75},
+      "raw": {"lens": "pinhole", "size": [1280, 800],
+              "K": [[645.692658, 0.0, 670.173747], [0.0, 648.713549, 391.694467], [0.0, 0.0, 1.0]],
+              "D": [-0.156076421, 0.058825089, 0.001467364, -0.005434515, 0.0]},
+      "view": {"size": [256, 256],
+               "K": [[204.84282, 0.0, 127.5], [0.0, 204.84282, 127.5], [0.0, 0.0, 1.0]],
+               "R": [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]}
+    },
+    "wrist_l": {
+      "topic": "/cam_wrist_l/image_raw/compressed",
+      "mount": "fixed",
+      "board": {"dict": "DICT_5X5_1000", "squares_x": 7, "squares_y": 5, "square_len_mm": 30, "marker_ratio": 0.75},
+      "raw": {"lens": "fisheye", "size": [1920, 1080],
+              "K": [[615.828444, 0.0, 995.698975], [0.0, 609.974813, 562.714099], [0.0, 0.0, 1.0]],
+              "D": [-0.071003527, 0.065613775, -0.029970684, -0.022302407]},
+      "view": {"size": [256, 256],
+               "K": [[240.732988, 0.0, 127.5], [0.0, 240.732988, 127.5], [0.0, 0.0, 1.0]],
+               "R": [[0.999804305, -0.01833859, -0.007419355], [0.013917024, 0.918563415, -0.395028568], [0.014059415, 0.394848007, 0.918638876]]}
+    },
+    "wrist_r": {
+      "topic": "/cam_wrist_r/image_raw/compressed",
+      "mount": "fixed",
+      "board": {"dict": "DICT_5X5_1000", "squares_x": 7, "squares_y": 5, "square_len_mm": 30, "marker_ratio": 0.75},
+      "raw": {"lens": "fisheye", "size": [1920, 1080],
+              "K": [[615.828444, 0.0, 995.698975], [0.0, 609.974813, 562.714099], [0.0, 0.0, 1.0]],
+              "D": [-0.071003527, 0.065613775, -0.029970684, -0.022302407]},
+      "view": {"size": [256, 256],
+               "K": [[240.732988, 0.0, 127.5], [0.0, 240.732988, 127.5], [0.0, 0.0, 1.0]],
+               "R": [[0.999804305, -0.01833859, -0.007419355], [0.013917024, 0.918563415, -0.395028568], [0.014059415, 0.394848007, 0.918638876]]}
+    }
+  }
+}

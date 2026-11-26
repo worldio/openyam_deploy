@@ -1,0 +1,36 @@
+[project]
+name = "openyam-deploy"
+version = "0.2.0"
+description = "Run OmniAct policies on the Anvil OpenYAM arm: Rollout server, camera calibration, monitor"
+requires-python = ">=3.12,<3.13"
+
+dependencies = [
+    "numpy==1.26.4",
+    "pyyaml==6.0.3",
+    "mujoco==3.13.0",
+    "opencv-contrib-python==4.9.0.80",
+    "scipy==1.17.1",
+    "grpcio==1.76.0",
+    "protobuf==6.31.1",
+    "pillow==12.3.0",
+    "matplotlib==3.11.2",
+    "imageio==2.37.4",
+    "av==18.1.0",
+    "fsspec==2026.9.0",
+    "torch==2.7.1",
+    "torchvision==0.22.1",
+    "wods==0.1.0",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+torchvision = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[build-system]
+requires = ["uv_build>=0.10.2,<0.11.0"]
+build-backend = "uv_build"
